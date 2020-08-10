@@ -1,8 +1,8 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.13.0"
 
-set :application, "my_app_name"
-set :repo_url, "git@example.com:me/my_repo.git"
+set :application, "test"
+set :repo_url, "https://github.com/Beecallpaw/deploy_test.git"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
@@ -37,3 +37,31 @@ set :repo_url, "git@example.com:me/my_repo.git"
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+
+namespace :vendor do
+    desc 'Copy vendor directory from last release'
+    task :copy do
+        on roles(:web) do
+            puts ("--> Copy vendor folder from previous release")
+            execute "vendorDir=#{current_path}/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir #{release_path}/vendor; fi;"
+        end
+    end
+end
+
+namespace :composer do
+    desc "Running Composer Install"
+    task :install do
+        on roles (:app) do
+            within release_path do
+                puts ("--> Running Composer Install")
+                execute :composer, "install --no-dev --quiet"
+                execute :composer, "du -o"
+            end
+        end
+    end
+end
+
+namespace :deploy do
+    after :updated, "vendor:copy"
+    after :updated, "composer:install"
+end
