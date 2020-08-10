@@ -3,13 +3,18 @@
 # Defines a single server with a list of roles and multiple properties.
 # You can define all roles on a single server, or split them:
 
-server "lxd.local", user: "ubuntu", roles: %w{app db web}
+server "lxd.local", user: "bee", roles: %w{app db web}
 
 # server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
 # server "db.example.com", user: "deploy", roles: %w{db}
 
 
-set :deploy_to, '/home/ubuntu/projects/test'
+set :deploy_to, '/home/bee/test'
+set :overlay_path, '/home/bee/overlay/'
+# set :app_name 'test'
+# set :app_env 'production'
+# set :app_debug 'false'
+# set :app_key 'base64:FbB/wrQhLi2LZmOQshNxZ7LH6p31ut+u1QP4d2Dqq0Y='
 
 # role-based syntax
 # ==================

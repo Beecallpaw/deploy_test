@@ -61,7 +61,42 @@ namespace :composer do
     end
 end
 
+namespace :environment do
+
+    desc "Set environment variables"
+    task :set_variables do
+        on roles(:app) do
+              puts ("--> Copying environment configuration file")
+              execute "cp #{release_path}/.env.example #{release_path}/.env"
+              puts ("--> Setting environment variables")
+              execute "sed --in-place -f #{fetch(:overlay_path)}/parameters.sed #{release_path}/.env"
+        end
+    end
+end
+
+namespace :nginx do
+    desc 'Reload nginx server'
+        task :reload do
+            on roles(:all) do
+            execute :sudo, :service, "nginx reload"
+        end
+    end
+end
+
+namespace :php_fpm do
+    desc 'Restart php-fpm'
+        task :reload do
+            on roles(:all) do
+            execute :sudo, :service, "php7.4-fpm reload"
+        end
+    end
+end
+
 namespace :deploy do
     after :updated, "vendor:copy"
     after :updated, "composer:install"
+    after :updated, "environment:set_variables"
 end
+
+after "deploy", "nginx:reload"
+after "deploy", "php_fpm:reload"
