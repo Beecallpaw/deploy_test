@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    Redis::set('hello', 'hi');
+    $name = Redis::get('hello');
     $users = App\User::all();
-    return view('welcome', compact('users'));
+    return view('welcome', compact('users', 'name'));
 });

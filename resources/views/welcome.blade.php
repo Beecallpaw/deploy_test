@@ -89,6 +89,7 @@
                     @foreach ($users as $user)
                     <li> {{ $user->name}} </li>
                     @endforeach
+                    {{$name}}
                 </div>
             </div>
         </div>
